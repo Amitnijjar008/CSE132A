@@ -1,0 +1,72 @@
+/*  SQL Project 1 
+	Amit Nijjar
+	A11489111
+*/
+
+Query 1:
+select sid, avg(grade) 
+from record where year = 2015 and 
+qtr = 'F' or 
+year = 2016 and 
+qtr = 'W' or 
+year = 2016 and 
+qtr = 'S' 
+group by sid;
+
+Query 2:
+
+select distinct a.sid, b.sid 
+from record a, record b 
+where a.year = 2016 and 
+a.qtr = 'F' and 
+b.year = 2016 and 
+b.qtr = 'F' and 
+a.cid = b.cid and 
+a.sid < b.sid;
+
+Query 3:
+
+select r.qtr, r.year, count(distinct r.cid) as num 
+from record r 
+where r.cid in 
+(select rr.cid 
+from record rr 
+where r.year = rr.year 
+group by rr.cid, rr.qtr, rr.year 
+having count(rr.sid) < 5) 
+group by r.qtr, r.year;
+
+ 
+Query 4:
+
+select distinct r.sid, count(r.cid) as num 
+from record r 
+where r.year = 2016 and r.qtr = 'F' 
+group by sid union select rr.sid, 0 
+from record rr w
+here rr.sid not in 
+(select distinct rrr.sid 
+from record rrr 
+where rrr.year = 2016 and 
+rrr.qtr = 'F' 
+group by sid);
+
+
+Query 5:
+
+//Not in:
+select distinct sid from record where sid not in (select distinct rec.sid from record rec where rec.sid not in (select r.sid from record r, record re where r.sid = re.sid and re.cid = (select precid from prerequisite where cid = 'CSE132X' limit 1) and r.cid = (select precid from prerequisite where cid = 'CSE132X' limit 1 offset 1) and r.grade >= 2 and re.grade >= 2));
+//Not exists
+select r.sid from record r, record re where r.sid = re.sid and re.cid = 'CSE107' and r.cid = 'CSE132B' and r.grade >= 2 and re.grade >= 2 and not exists(select red.sid from record red where cid = 'XXXXX');
+
+Query 6:
+
+
+
+Query 7:
+
+update record set cid = 'CSE132c' where cid = 'CSE132A' and year = 2016 and qtr = 'F';
+update record set cid = 'CSE132A' where cid = 'CSE132B' and year = 2016 and qtr = 'F';
+update record set cid = 'CSE132B' where cid = 'CSE132c' and year = 2016 and qtr = 'F';
+
+
